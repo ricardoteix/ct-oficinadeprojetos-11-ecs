@@ -31,6 +31,11 @@ resource "aws_ecs_task_definition" "openproject" {
         "name": "OPENPROJECT_HOST__NAME",
         "value": "${aws_lb.openproject.dns_name}"
       },
+      },
+      {
+        "name": "OPENPROJECT_CACHE__MEMCACHE__SERVER",
+        "value": "${aws_elasticache_cluster.memcached.cache_nodes.0.address}:11211"
+      },
       {
         "name": "DATABASE_URL",
         "value": "postgresql://${var.rds-nome-usuario}:${var.rds-senha-usuario}@${aws_db_instance.projeto-rds.address}:5432/openproject"
@@ -146,16 +151,5 @@ resource "aws_lb_listener" "openproject" {
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.openproject.arn
-  }
-}
-
-output "openproject-lb-dns" {
-  // Existing output
-
-  // Add the following output to display the CloudWatch Logs group and stream names
-  value = {
-    lb_dns       = aws_lb.openproject.dns_name
-    log_group    = aws_cloudwatch_log_group.openproject.name
-    log_stream   = aws_cloudwatch_log_stream.openproject.name
   }
 }

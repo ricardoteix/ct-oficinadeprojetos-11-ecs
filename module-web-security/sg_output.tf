@@ -13,3 +13,7 @@ output "sg-elb" {
 output "sg-efs" {
   value = aws_security_group.sg_projeto_efs
 }
+
+output "sg-cache" {
+  value = aws_security_group.sg_projeto_cache
+}
