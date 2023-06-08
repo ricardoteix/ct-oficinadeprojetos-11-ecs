@@ -151,8 +151,8 @@ resource "aws_security_group" "sg_projeto_cache" {
 
   ingress {
     description      = "MEMCACHED"
-    from_port        = 1121
-    to_port          = 1121
+    from_port        = 11211
+    to_port          = 11211
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
