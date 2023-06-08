@@ -61,6 +61,9 @@ resource "aws_ecs_service" "openproject" {
   task_definition = aws_ecs_task_definition.openproject.arn
   desired_count   = 1
   launch_type = "FARGATE"
+  platform_version = "LATEST"
+  deployment_maximum_percent = 200
+  deployment_minimum_healthy_percent = 100
   network_configuration {
     subnets = setunion(
         module.network.public_subnets[*].id,
@@ -70,7 +73,7 @@ resource "aws_ecs_service" "openproject" {
     assign_public_ip = true
   }
   deployment_controller {
-    type = "CODE_DEPLOY"
+    type = "ECS"
   }
   lifecycle {
     // Define a "create_before_destroy" behavior to update the service
