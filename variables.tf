@@ -9,7 +9,6 @@ variable "regiao" {
 variable "profile" {
   description = "Profile com as credenciais criadas no IAM"
   type = string
-  default = "ricardoteixcloud"
 }
 
 variable "tag-base" {
