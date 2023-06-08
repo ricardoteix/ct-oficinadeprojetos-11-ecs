@@ -12,4 +12,5 @@ module "security" {
 # module.security.sg-elb
 # module.security.sg-db
 # module.security.sg-efs
+# module.security.sg-cache
 

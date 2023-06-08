@@ -31,7 +31,6 @@ resource "aws_ecs_task_definition" "openproject" {
         "name": "OPENPROJECT_HOST__NAME",
         "value": "${aws_lb.openproject.dns_name}"
       },
-      },
       {
         "name": "OPENPROJECT_CACHE__MEMCACHE__SERVER",
         "value": "${aws_elasticache_cluster.memcached.cache_nodes.0.address}:11211"
