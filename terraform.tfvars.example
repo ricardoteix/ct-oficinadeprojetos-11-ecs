@@ -1,0 +1,17 @@
+# Renomeie este arquivo, ou crie outro, com nome terraform.tfvars
+# Depois adicione os valores desejados para as variáveis abaixo.
+# Isto evitará que sejam solicitados valores para estas variávies 
+# quando forem executados os comandos do terraform.
+
+rds-nome-usuario = "postgteadmin"
+rds-senha-usuario = "Projeto112023"
+rds-identificador = "projeto11"
+rds-nome-banco = "openproject"
+rds-tipo-instancia = "db.t3.micro"
+
+# Nome do profile criado com AWS CLI com as
+# credenciais do IAM.
+profile = "nome_do_seu_profile"
+
+# Especifique o nome da tag padrão utilizada nos nomes dos serviços
+tag-base = "projeto11"
