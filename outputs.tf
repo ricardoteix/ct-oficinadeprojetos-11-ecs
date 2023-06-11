@@ -24,3 +24,7 @@ export const API_KEY = "<Obter no OpenProject>";
     EOT
     filename = "./k6-load-test/env.js"
 }
+
+output "nome-bucket" {
+  value = var.nome-bucket
+}

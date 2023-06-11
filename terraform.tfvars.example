@@ -15,3 +15,6 @@ profile = "nome_do_seu_profile"
 
 # Especifique o nome da tag padrão utilizada nos nomes dos serviços
 tag-base = "projeto11"
+
+# Especifique o nome do bucket
+nome-bucket = "ct-projeto11-ecs-op"

@@ -64,3 +64,10 @@ variable "rds-senha-usuario" {
   # default     = "nao colocar valor padrão aqui" # Não deixar padrão para versionar com git.
   # Veja o arquivo terraform.tfvars.exemplo para definir um valor fixo para esta variável.
 }
+
+# S3
+variable "nome-bucket" {
+  description = "Nome do bucket para configurar no Projeto"
+  type = string
+  default = "projeto-files"  # Como o bucket deve ser unico em toda a AWS, sugiro modifica este nome para evitar conflito.
+}

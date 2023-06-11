@@ -1,3 +1,7 @@
+# Documentação sobre S3
+# https://www.openproject.org/docs/installation-and-operations/configuration/#attachments-storage
+# https://github.com/opf/openproject/blob/dev/docs/installation-and-operations/configuration/README.md#attachment-storage-type
+
 resource "aws_ecs_task_definition" "openproject" {
   family                   = "openproject"
   requires_compatibilities = ["FARGATE"]
@@ -47,6 +51,34 @@ resource "aws_ecs_task_definition" "openproject" {
       {
         "name": "DATABASE_URL",
         "value": "postgresql://${var.rds-nome-usuario}:${var.rds-senha-usuario}@${aws_db_instance.projeto-rds.address}:5432/openproject"
+      },
+      {
+        "name": "OPENPROJECT_ATTACHMENTS__STORAGE",
+        "value": "fog"
+      },
+      {
+        "name": "OPENPROJECT_FOG_CREDENTIALS_AWS__ACCESS__KEY__ID",
+        "value": "${aws_iam_access_key.s3_user_key.id}"
+      },
+      {
+        "name": "OPENPROJECT_FOG_CREDENTIALS_AWS__SECRET__ACCESS__KEY",
+        "value": "${aws_iam_access_key.s3_user_key.secret}"
+      },
+      {
+        "name": "OPENPROJECT_FOG_CREDENTIALS_PROVIDER",
+        "value": "AWS"
+      },
+      {
+        "name": "OPENPROJECT_FOG_CREDENTIALS_REGION",
+        "value": "${var.regiao}"
+      },
+      {
+        "name": "OPENPROJECT_REMOTE__STORAGE__UPLOAD__HOST",
+        "value": "${var.nome-bucket}.s3.amazonaws.com"
+      },
+      {
+        "name": "OPENPROJECT_REMOTE__STORAGE__DOWNLOAD__HOST",
+        "value": "${var.nome-bucket}.s3.${var.regiao}.amazonaws.com"
       }
     ],
     "requires_compatibilities": ["FARGATE"],
