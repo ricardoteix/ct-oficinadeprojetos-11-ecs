@@ -9,15 +9,15 @@ resource "aws_ecs_task_definition" "openproject" {
   cpu                      = 2048
   memory                   = 4096
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
-  volume {
-    name = "efs-volume"
-    efs_volume_configuration {
-      file_system_id          = aws_efs_file_system.projeto-efs.id  // Replace with your EFS file system ID
-      root_directory          = "/var/openproject"  // Replace with the desired root directory within the EFS file system
-      transit_encryption      = "ENABLED"  // Enable or disable transit encryption (ENABLED or DISABLED)
-      transit_encryption_port = 2049  // Specify the port for transit encryption (default is 2049)
-    }
-  }
+  # volume {
+  #   name = "efs-volume"
+  #   efs_volume_configuration {
+  #     file_system_id          = aws_efs_file_system.projeto-efs.id  // Replace with your EFS file system ID
+  #     root_directory          = "/var/openproject"  // Replace with the desired root directory within the EFS file system
+  #     transit_encryption      = "ENABLED"  // Enable or disable transit encryption (ENABLED or DISABLED)
+  #     transit_encryption_port = 2049  // Specify the port for transit encryption (default is 2049)
+  #   }
+  # }
   container_definitions    = <<DEFINITION
 [
   {
@@ -73,12 +73,8 @@ resource "aws_ecs_task_definition" "openproject" {
         "value": "${var.regiao}"
       },
       {
-        "name": "OPENPROJECT_REMOTE__STORAGE__UPLOAD__HOST",
-        "value": "${var.nome-bucket}.s3.amazonaws.com"
-      },
-      {
-        "name": "OPENPROJECT_REMOTE__STORAGE__DOWNLOAD__HOST",
-        "value": "${var.nome-bucket}.s3.${var.regiao}.amazonaws.com"
+        "name": "OPENPROJECT_FOG_DIRECTORY",
+        "value": "${var.nome-bucket}"
       }
     ],
     "requires_compatibilities": ["FARGATE"],
@@ -90,18 +86,20 @@ resource "aws_ecs_task_definition" "openproject" {
         "containerPort": 8080,
         "hostPort": 8080
       }
-    ],
-    "mountPoints": [
-      {
-        "sourceVolume": "efs-volume",
-        "containerPath": "/var/openproject",
-        "readOnly": false
-      }
     ]
   }
-]
+]    
 DEFINITION
 }
+
+# ,
+#     "mountPoints": [
+#       {
+#         "sourceVolume": "efs-volume",
+#         "containerPath": "/var/openproject",
+#         "readOnly": false
+#       }
+#     ]
 
 resource "aws_ecs_cluster" "openproject-cluster" {
   name = "openproject-cluster" 
