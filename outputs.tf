@@ -19,7 +19,7 @@ output "openproject-lb-dns" {
 
 resource "local_file" "private_key" {
     content  = <<-EOT
-export const LOADBALANCER_DNS = "${aws_lb.openproject.dns_name}";
+export const LOADBALANCER_DNS = "http://${aws_lb.openproject.dns_name}";
 export const API_KEY = "<Obter no OpenProject>";
     EOT
     filename = "./k6-load-test/env.js"

@@ -5,12 +5,12 @@ import { LOADBALANCER_DNS, API_KEY } from "./env.js";
 // Configuração de subida e descida de 200 usuários em 10 minutos
 export const options = {
     stages: [
-        // { duration: '3m', target: 150 },
-        // { duration: '2m', target: 200 },
-        // { duration: '5m', target: 0 }
-        { duration: '60s', target: 150 },
-        { duration: '60s', target: 200 },
-        { duration: '60s', target: 0 }
+        { duration: '5m', target: 150 },
+        { duration: '3m', target: 200 },
+        { duration: '2m', target: 250 },
+        { duration: '3m', target: 400 },
+        { duration: '5m', target: 200 },
+        { duration: '5m', target: 0 }
     ],
 };
 
