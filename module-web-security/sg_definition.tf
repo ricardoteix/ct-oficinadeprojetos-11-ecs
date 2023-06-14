@@ -5,37 +5,37 @@ resource "aws_security_group" "sg_projeto_web" {
   description = "Allow web inbound traffic"
   vpc_id      = var.vpc-id
 
-  ingress {
-    description      = "HTTPS"
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
+  # ingress {
+  #   description      = "HTTPS"
+  #   from_port        = 443
+  #   to_port          = 443
+  #   protocol         = "tcp"
+  #   cidr_blocks      = ["0.0.0.0/0"]
+  #   ipv6_cidr_blocks = ["::/0"]
+  # }
   
-  ingress {
-    description      = "HTTP"
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
+  # ingress {
+  #   description      = "HTTP"
+  #   from_port        = 80
+  #   to_port          = 80
+  #   protocol         = "tcp"
+  #   cidr_blocks      = ["0.0.0.0/0"]
+  #   ipv6_cidr_blocks = ["::/0"]
+  # }
+  
+  # ingress {
+  #   description      = "SSH"
+  #   from_port        = 22
+  #   to_port          = 22
+  #   protocol         = "tcp"
+  #   cidr_blocks      = ["0.0.0.0/0"]
+  #   ipv6_cidr_blocks = ["::/0"]
+  # }
   
   ingress {
     description      = "HTTP"
     from_port        = 8080
     to_port          = 8080
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  ingress {
-    description      = "SSH"
-    from_port        = 22
-    to_port          = 22
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
@@ -169,4 +169,70 @@ resource "aws_security_group" "sg_projeto_cache" {
   tags = {
     Name = "sg-${var.tags-sufix}-cache"
   }
+}
+
+
+
+resource "aws_security_group" "sg_projeto_ses" {
+  name        = "sg_${var.tags-sufix}_ses"
+  description = "Allow web inbound traffic"
+  vpc_id      =  var.vpc-id
+
+  ingress {
+    description      = "STARTTLS Port"
+    from_port        = 25
+    to_port          = 25
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  ingress {
+    description      = "STARTTLS Port"
+    from_port        = 587
+    to_port          = 587
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  ingress {
+    description      = "STARTTLS Port"
+    from_port        = 2587
+    to_port          = 2587
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  ingress {
+    description      = "TLS Wrapper Port"
+    from_port        = 465
+    to_port          = 465
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  ingress {
+    description      = "TLS Wrapper Port"
+    from_port        = 2465
+    to_port          = 2465
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    Name = "sg-${var.tags-sufix}-db"
+  }
+
 }

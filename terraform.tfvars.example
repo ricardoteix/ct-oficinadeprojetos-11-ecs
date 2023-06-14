@@ -18,3 +18,5 @@ tag-base = "projeto11"
 
 # Especifique o nome do bucket
 nome-bucket = "ct-projeto11-ecs-op"
+
+user-email = "seu@email.com"

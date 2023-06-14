@@ -35,3 +35,8 @@ variable "public_subnet_cidr_blocks" {
 variable "private_subnet_cidr_blocks" {
     type    = list(string)
 }
+
+variable "use_nat" {
+    type = bool
+    default = false
+}

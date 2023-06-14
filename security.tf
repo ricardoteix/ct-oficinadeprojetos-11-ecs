@@ -13,4 +13,5 @@ module "security" {
 # module.security.sg-db
 # module.security.sg-efs
 # module.security.sg-cache
+# module.security.sg-ses
 

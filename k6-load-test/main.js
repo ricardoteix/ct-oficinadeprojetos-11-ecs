@@ -8,9 +8,9 @@ export const options = {
         // { duration: '3m', target: 150 },
         // { duration: '2m', target: 200 },
         // { duration: '5m', target: 0 }
-        { duration: '30s', target: 40 },
-        { duration: '30s', target: 30 },
-        { duration: '30s', target: 0 }
+        { duration: '60s', target: 150 },
+        { duration: '60s', target: 200 },
+        { duration: '60s', target: 0 }
     ],
 };
 

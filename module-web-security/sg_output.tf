@@ -17,3 +17,7 @@ output "sg-efs" {
 output "sg-cache" {
   value = aws_security_group.sg_projeto_cache
 }
+
+output "sg-ses" {
+  value = aws_security_group.sg_projeto_ses
+}

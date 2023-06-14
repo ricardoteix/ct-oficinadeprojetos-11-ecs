@@ -66,6 +66,42 @@ resource "aws_ecs_task_definition" "openproject" {
       {
         "name": "OPENPROJECT_FOG_DIRECTORY",
         "value": "${var.nome-bucket}"
+      },
+      {
+        "name": "RAILS_ENV",
+        "value": "production"
+      },
+      {
+        "name": "OPENPROJECT_EMAIL__DELIVERY__METHOD",
+        "value": "smtp"
+      },
+      {
+        "name": "OPENPROJECT_SMTP__ADDRESS",
+        "value": "email-smtp.${var.regiao}.amazonaws.com"
+      },
+      {
+        "name": "OPENPROJECT_SMTP__USER__NAME",
+        "value": "${aws_iam_access_key.smtp_user.id}"
+      },
+      {
+        "name": "OPENPROJECT_SMTP__PASSWORD",
+        "value": "${aws_iam_access_key.smtp_user.ses_smtp_password_v4}"
+      },
+      {
+        "name": "OPENPROJECT_SMTP__PORT",
+        "value": "587"
+      },
+      {
+        "name": "OPENPROJECT_SMTP__DOMAIN",
+        "value": "${aws_lb.openproject.dns_name}"
+      },
+      {
+        "name": "OPENPROJECT_SMTP__AUTHENTICATION",
+        "value": "login"
+      },
+      {
+        "name": "OPENPROJECT_SMTP__ENABLE__STARTTLS__AUTO",
+        "value": "true"
       }
     ],
     "requires_compatibilities": ["FARGATE"],
@@ -98,11 +134,11 @@ resource "aws_ecs_service" "openproject" {
   deployment_minimum_healthy_percent = 100
   network_configuration {
     subnets = setunion(
-        module.network.public_subnets[*].id,
+        # module.network.public_subnets[*].id,
         module.network.private_subnets[*].id
     )
     security_groups = [module.security.sg-web.id]
-    assign_public_ip = true
+    assign_public_ip = false
   }
   deployment_controller {
     type = "ECS"
@@ -152,6 +188,11 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
   role       = aws_iam_role.ecs_task_execution_role.name
 }
 
+resource "aws_iam_role_policy_attachment" "efs_mount_policy_attachment" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonElasticFileSystemClientReadWriteAccess"  // Replace with the appropriate EFS policy ARN
+  role       = aws_iam_role.ecs_task_execution_role.name
+}
+
 # ELB
 
 resource "aws_lb" "openproject" {
@@ -178,5 +219,46 @@ resource "aws_lb_listener" "openproject" {
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.openproject.arn
+  }
+}
+
+# ASG
+resource "aws_appautoscaling_target" "ecs_service_as" {
+  max_capacity = 3
+  min_capacity = 1
+  resource_id = "service/${aws_ecs_cluster.openproject-cluster.name}/${aws_ecs_service.openproject.name}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace = "ecs"
+}
+
+resource "aws_appautoscaling_policy" "scale-to-memory" {
+  name               = "scale-to-memory"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.ecs_service_as.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_service_as.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.ecs_service_as.service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageMemoryUtilization"
+    }
+
+    target_value = 70
+  }
+}
+
+resource "aws_appautoscaling_policy" "scale-to-cpu" {
+  name = "scale-to-cpu"
+  policy_type = "TargetTrackingScaling"
+  resource_id = aws_appautoscaling_target.ecs_service_as.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_service_as.scalable_dimension
+  service_namespace = aws_appautoscaling_target.ecs_service_as.service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+    }
+
+    target_value = 30
   }
 }

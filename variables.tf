@@ -71,3 +71,8 @@ variable "nome-bucket" {
   type = string
   default = "projeto-files"  # Como o bucket deve ser unico em toda a AWS, sugiro modifica este nome para evitar conflito.
 }
+
+variable "user-email" {
+  description = "Email do Admin para teste do SES"
+  type = string
+}
