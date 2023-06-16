@@ -76,3 +76,15 @@ variable "user-email" {
   description = "Email do Admin para teste do SES"
   type = string
 }
+
+variable "min-tasks" {
+  description = "Quantidade mínima de tasks no autoscaling"
+  type = number
+  default = 1
+}
+
+variable "max-tasks" {
+  description = "Quantidade máxima de tasks no autoscaling"
+  type = number
+  default = 2
+}

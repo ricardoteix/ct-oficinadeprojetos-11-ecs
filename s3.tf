@@ -1,5 +1,12 @@
+resource "random_string" "random" {
+  length  = 4
+  special = false
+  upper   = false
+  numeric  = true
+}
+
 resource "aws_s3_bucket" "projeto-static" {
-  bucket = var.nome-bucket
+  bucket = "${var.nome-bucket}-${random_string.random.result}"
 
   force_destroy = true # CUIDADO! Em um ambiente de produção você pode não querer apagar tudo no bucket
   
@@ -25,7 +32,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "projeto-static-config" {
   bucket = aws_s3_bucket.projeto-static.id
 
   rule {
-    id = var.nome-bucket
+    id = aws_s3_bucket.projeto-static.bucket
 
     status = "Enabled"
 

@@ -7,7 +7,9 @@ resource "aws_efs_file_system" "projeto-efs" {
  }
 
 resource "aws_efs_mount_target" "projeto-efs-mt" {
-   file_system_id  = aws_efs_file_system.projeto-efs.id
-   subnet_id = module.network.public_subnets[0].id
-   security_groups = [module.security.sg-efs.id]
+  count = length(module.network.private_subnets)
+  file_system_id  = aws_efs_file_system.projeto-efs.id
+  subnet_id = module.network.private_subnets[count.index].id
+  security_groups = [module.security.sg-efs.id]
+
  }

@@ -9,6 +9,17 @@ resource "aws_ecs_task_definition" "openproject" {
   cpu                      = 2048
   memory                   = 4096
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  
+  volume {
+    name = "efs-volume"
+
+    efs_volume_configuration {
+      file_system_id          = aws_efs_file_system.projeto-efs.id
+      transit_encryption      = "ENABLED"
+      transit_encryption_port = 2049
+    }
+  }
+
   container_definitions    = <<DEFINITION
 [
   {
@@ -22,6 +33,12 @@ resource "aws_ecs_task_definition" "openproject" {
         "awslogs-stream-prefix": "ecs"
       }
     },
+    "mountPoints": [
+      {
+        "sourceVolume": "efs-volume",
+        "containerPath": "/var/openproject/assets/"
+      }
+    ],
     "environment": [
       {
         "name": "OPENPROJECT_HTTPS",
@@ -65,7 +82,7 @@ resource "aws_ecs_task_definition" "openproject" {
       },
       {
         "name": "OPENPROJECT_FOG_DIRECTORY",
-        "value": "${var.nome-bucket}"
+        "value": "${aws_s3_bucket.projeto-static.bucket}"
       },
       {
         "name": "RAILS_ENV",
@@ -224,27 +241,11 @@ resource "aws_lb_listener" "openproject" {
 
 # ASG
 resource "aws_appautoscaling_target" "ecs_service_as" {
-  max_capacity = 3
-  min_capacity = 1
+  max_capacity = var.max-tasks
+  min_capacity = var.min-tasks
   resource_id = "service/${aws_ecs_cluster.openproject-cluster.name}/${aws_ecs_service.openproject.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace = "ecs"
-}
-
-resource "aws_appautoscaling_policy" "scale-to-memory" {
-  name               = "scale-to-memory"
-  policy_type        = "TargetTrackingScaling"
-  resource_id        = aws_appautoscaling_target.ecs_service_as.resource_id
-  scalable_dimension = aws_appautoscaling_target.ecs_service_as.scalable_dimension
-  service_namespace  = aws_appautoscaling_target.ecs_service_as.service_namespace
-
-  target_tracking_scaling_policy_configuration {
-    predefined_metric_specification {
-      predefined_metric_type = "ECSServiceAverageMemoryUtilization"
-    }
-
-    target_value = 70
-  }
 }
 
 resource "aws_appautoscaling_policy" "scale-to-cpu" {
@@ -255,6 +256,9 @@ resource "aws_appautoscaling_policy" "scale-to-cpu" {
   service_namespace = aws_appautoscaling_target.ecs_service_as.service_namespace
 
   target_tracking_scaling_policy_configuration {
+    scale_in_cooldown  = 30
+    scale_out_cooldown = 30
+
     predefined_metric_specification {
       predefined_metric_type = "ECSServiceAverageCPUUtilization"
     }
@@ -262,3 +266,38 @@ resource "aws_appautoscaling_policy" "scale-to-cpu" {
     target_value = 30
   }
 }
+
+# resource "aws_appautoscaling_policy" "scale-to-memory" {
+#   name               = "scale-to-memory"
+#   policy_type        = "TargetTrackingScaling"
+#   resource_id        = aws_appautoscaling_target.ecs_service_as.resource_id
+#   scalable_dimension = aws_appautoscaling_target.ecs_service_as.scalable_dimension
+#   service_namespace  = aws_appautoscaling_target.ecs_service_as.service_namespace
+
+#   target_tracking_scaling_policy_configuration {
+#     predefined_metric_specification {
+#       predefined_metric_type = "ECSServiceAverageMemoryUtilization"
+#     }
+
+#     target_value = 70
+#   }
+# }
+
+# resource "aws_appautoscaling_policy" "scale-to-cpu" {
+#   name = "scale-to-cpu"
+#   policy_type = "TargetTrackingScaling"
+#   resource_id = aws_appautoscaling_target.ecs_service_as.resource_id
+#   scalable_dimension = aws_appautoscaling_target.ecs_service_as.scalable_dimension
+#   service_namespace = aws_appautoscaling_target.ecs_service_as.service_namespace
+
+#   target_tracking_scaling_policy_configuration {
+#     adjustment_type         = "ChangeInCapacity"
+#     cooldown = 60
+
+#     predefined_metric_specification {
+#       predefined_metric_type = "ECSServiceAverageCPUUtilization"
+#     }
+
+#     target_value = 30
+#   }
+# }

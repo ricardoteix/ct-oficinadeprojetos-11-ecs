@@ -17,7 +17,16 @@ output "openproject-lb-dns" {
   }
 }
 
-resource "local_file" "private_key" {
+resource "local_file" "locust_env" {
+    content  = <<-EOT
+LOADBALANCER_DNS="http://${aws_lb.openproject.dns_name}";
+API_KEY="<Obter no OpenProject>";
+    EOT
+    filename = "./locust-load-test/.env"
+}
+
+
+resource "local_file" "k6_env" {
     content  = <<-EOT
 export const LOADBALANCER_DNS = "http://${aws_lb.openproject.dns_name}";
 export const API_KEY = "<Obter no OpenProject>";
@@ -26,7 +35,7 @@ export const API_KEY = "<Obter no OpenProject>";
 }
 
 output "nome-bucket" {
-  value = var.nome-bucket
+  value = aws_s3_bucket.projeto-static.bucket
 }
 
 output "smtp_username" {

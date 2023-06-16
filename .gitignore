@@ -48,3 +48,10 @@ override.tf.json
 # example: *tfplan*
 
 .terraform.lock.hcl
+
+k6-load-test/env.js
+
+locust-load-test/.env
+
+env/
+__pycache__/
