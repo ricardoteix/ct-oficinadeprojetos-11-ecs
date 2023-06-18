@@ -66,3 +66,28 @@ EOF
 #     password = aws_iam_user_login_profile.readonly_user_login_profile.encrypted_password
 #   }
 # }
+
+resource "aws_iam_policy" "ecr_access_policy" {
+  name        = "ECRAccessPolicy"
+  description = "Allows ECS task to access ECR"
+  policy      = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ecr:GetAuthorizationToken",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage",
+        "ecr:DescribeRepositories",
+        "ecr:DescribeImages",
+        "ecr:ListImages"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}

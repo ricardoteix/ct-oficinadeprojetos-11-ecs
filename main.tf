@@ -14,3 +14,5 @@ provider "aws" {
   region = var.regiao
   profile =  var.profile # Não usar credenciais em repositórios GIT. Configurar o profile para o AWS CLI com do profile
 }
+
+data "aws_caller_identity" "current" {}

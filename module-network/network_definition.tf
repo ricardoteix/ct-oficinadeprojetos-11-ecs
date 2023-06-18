@@ -41,10 +41,14 @@ resource "aws_route_table" "rt-projeto-private" {
   count = length(var.private_subnet_cidr_blocks)
   vpc_id = aws_vpc.vpc-projeto.id
   
-  route {
-    cidr_block = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat-projeto[count.index].id  
+  dynamic "route" {
+    for_each = var.use_nat ? [1] : []
+    content {
+      cidr_block     = "0.0.0.0/0"
+      nat_gateway_id = aws_nat_gateway.nat-projeto[count.index].id
+    }
   }
+
 
   tags = {
     Name = "rt-${var.tags-sufix}-private-${count.index + 1}"
@@ -107,7 +111,7 @@ resource "aws_nat_gateway" "nat-projeto" {
 }
 
 resource "aws_eip" "nat-eip" {
-  count = length(var.public_subnet_cidr_blocks)
+  count = var.use_nat ? length(var.public_subnet_cidr_blocks) : 0
 
   vpc = true
 

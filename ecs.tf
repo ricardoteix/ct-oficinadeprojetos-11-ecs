@@ -9,7 +9,12 @@ resource "aws_ecs_task_definition" "openproject" {
   cpu                      = 2048
   memory                   = 4096
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
   
+  # Depend on the ECR push
+  # ECR Removido 
+  # depends_on = [null_resource.image_to_ecr]
+
   volume {
     name = "efs-volume"
 
@@ -24,7 +29,7 @@ resource "aws_ecs_task_definition" "openproject" {
 [
   {
     "name": "openproject",
-    "image": "openproject/community:12",
+    "image": "${var.image-ecr-uri}",
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
@@ -138,13 +143,18 @@ DEFINITION
 
 resource "aws_ecs_cluster" "openproject-cluster" {
   name = "openproject-cluster" 
+  
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
 }
 
 resource "aws_ecs_service" "openproject" {
   name            = "openproject"
   cluster         = aws_ecs_cluster.openproject-cluster.id
   task_definition = aws_ecs_task_definition.openproject.arn
-  desired_count   = 1
+  desired_count   = 2
   launch_type = "FARGATE"
   platform_version = "LATEST"
   deployment_maximum_percent = 200
@@ -198,6 +208,11 @@ resource "aws_iam_role" "ecs_task_execution_role" {
   ]
 }
 POLICY
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_ecr_policy_attachment" {
+  role       = aws_iam_role.ecs_task_execution_role.name
+  policy_arn = aws_iam_policy.ecr_access_policy.arn
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
@@ -266,6 +281,7 @@ resource "aws_appautoscaling_policy" "scale-to-cpu" {
     target_value = 30
   }
 }
+
 
 # resource "aws_appautoscaling_policy" "scale-to-memory" {
 #   name               = "scale-to-memory"

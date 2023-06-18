@@ -88,3 +88,14 @@ variable "max-tasks" {
   type = number
   default = 2
 }
+
+variable "image-ecr-uri" {
+  description = "Endereço da imagem no ECR"
+  type = string
+}
+
+variable "use-nat-gateway" {
+  description = "Especifica se serão criados NAT Gateways para cada Subnet pública."
+  type = bool
+  default = false
+}

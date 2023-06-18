@@ -20,3 +20,5 @@ tag-base = "projeto11"
 nome-bucket = "ct-projeto11-ecs-op"
 
 user-email = "seu@email.com"
+
+docker-image = "openproject/community:12"
