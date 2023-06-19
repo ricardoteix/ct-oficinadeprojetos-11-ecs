@@ -12,7 +12,13 @@ Toda a infraestrutura é criada via Terraform.
 
 # Imagem utilizada
 
-Para usar o ECS precisamos da imagem que vai ser usada para subir o container. No nosso caso usamos a **openproject/community:12**, que é a oficial do OpenProject disponível no DockerHub.
+Para usar o ECS precisamos da imagem que vai ser usada para subir o container. 
+
+Como vamos usar nosso ECS em uma rede privada, seria preciso que a rede tivesse acesso à internet para baixar a imagem **openproject/community:12**, que é a oficial do OpenProject disponível no DockerHub, via NAT Gateways. Para evitar o uso de NATs podemos usar VPC Endpoints. 
+
+Se a decisão for por usar NATs é preciso definir a variável ``use-nat-gateway`` como ``true`` no arquivo **terraform.tfvars**. Assim os NATs serão criamos e os VPC Endpoints não serão.
+
+Se optar por não usar NATs é preciso definir esta variável como ``false``, a imagem deverá ser baixada do ECR, e sua URI especificada na variáveç ``image-ecr-uri``.
 
 No arquivo **ecs.tf** temos a definição do container e as variáveis de ambiente necessárias para prover acesso ao banco, dns da aplicação e algumas outras.
 

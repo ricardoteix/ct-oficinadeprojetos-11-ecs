@@ -29,14 +29,14 @@ max-tasks = 8
 
 # Imagem do ECR para baixar a aplicação
 # Se usar do Docker Hub terá que habilitar o NAT
-image-ecr-uri = "413618450476.dkr.ecr.us-east-1.amazonaws.com/openproject:12"
+image-ecr-uri = "id_da_conta.dkr.ecr.us-east-1.amazonaws.com/nome_imagem:tag_imagem"
 
 # Define se serão criados NAT Gateways nas 
 # subnets 
 use-nat-gateway = false
 
 # Define quantidade de CPU para cada task
-ecs-vcpu = (2 * 1024)
+ecs-vcpu = (2 * 1024) # 2 vCPU
 
 # Define quantidade de memória para cada task
-ecs-memory = (4 * 1024)
+ecs-memory = (4 * 1024) # 4 GB de RAM
