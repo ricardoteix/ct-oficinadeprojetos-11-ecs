@@ -1,6 +1,6 @@
 # Endpoint
 resource "aws_vpc_endpoint" "ecr_endpoint_api" {
-  count = var.use-nat-gateway ? 1 : 0
+  count = var.use-nat-gateway ? 0 : 1
   vpc_id              = module.network.vpc_id
   service_name        = "com.amazonaws.${var.regiao}.ecr.api"
   vpc_endpoint_type   = "Interface"
@@ -15,7 +15,7 @@ resource "aws_vpc_endpoint" "ecr_endpoint_api" {
 }
 
 resource "aws_vpc_endpoint" "ecr_endpoint_dkr" {
-  count = var.use-nat-gateway ? 1 : 0
+  count = var.use-nat-gateway ? 0 : 1
   vpc_id              = module.network.vpc_id
   service_name        = "com.amazonaws.${var.regiao}.ecr.dkr"
   vpc_endpoint_type   = "Interface"
@@ -30,7 +30,7 @@ resource "aws_vpc_endpoint" "ecr_endpoint_dkr" {
 }
 
 resource "aws_vpc_endpoint" "ecr_endpoint_logs" {
-  count = var.use-nat-gateway ? 1 : 0
+  count = var.use-nat-gateway ? 0 : 1
   vpc_id              = module.network.vpc_id
   service_name        = "com.amazonaws.${var.regiao}.logs"
   vpc_endpoint_type   = "Interface"
@@ -45,7 +45,7 @@ resource "aws_vpc_endpoint" "ecr_endpoint_logs" {
 }
 
 resource "aws_vpc_endpoint" "ecr_endpoint_s3" {
-  count = var.use-nat-gateway ? 1 : 0
+  count = var.use-nat-gateway ? 0 : 1
   vpc_id              = module.network.vpc_id
   service_name        = "com.amazonaws.${var.regiao}.s3"
   vpc_endpoint_type   = "Gateway"
