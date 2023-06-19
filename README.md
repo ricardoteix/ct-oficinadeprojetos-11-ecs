@@ -10,6 +10,8 @@ O sistema a ser executado neste exemplo é o OpenProject, que é um sistema para
 
 Toda a infraestrutura é criada via Terraform.
 
+Para usar este repositório consulte a seção [**Terraform**](#terraform) abaixo neste texto.
+
 # Imagem utilizada
 
 Para usar o ECS precisamos da imagem que vai ser usada para subir o container. 
