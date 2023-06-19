@@ -9,3 +9,11 @@ output "private_subnets" {
 output "vpc_id" {
   value = aws_vpc.vpc-projeto.id
 }
+
+output "private_route_tables" {
+  value = aws_route_table.rt-projeto-private
+}
+
+output "public_route_tables" {
+  value = aws_route_table.rt-projeto-public
+}
