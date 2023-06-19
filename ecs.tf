@@ -6,8 +6,8 @@ resource "aws_ecs_task_definition" "openproject" {
   family                   = "openproject"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = 2048
-  memory                   = 4096
+  cpu                      = var.ecs-vcpu
+  memory                   = var.ecs-memory
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
   
@@ -127,8 +127,8 @@ resource "aws_ecs_task_definition" "openproject" {
       }
     ],
     "requires_compatibilities": ["FARGATE"],
-    "cpu": 2048,
-    "memory": 4096,
+    "cpu": ${var.ecs-vcpu},
+    "memory": ${var.ecs-memory},
     "essential": true,
     "portMappings": [
       {
@@ -143,7 +143,7 @@ DEFINITION
 
 resource "aws_ecs_cluster" "openproject-cluster" {
   name = "openproject-cluster" 
-  
+
   setting {
     name  = "containerInsights"
     value = "enabled"

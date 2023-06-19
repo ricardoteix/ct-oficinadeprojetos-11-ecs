@@ -89,6 +89,18 @@ variable "max-tasks" {
   default = 2
 }
 
+variable "ecs-vcpu" {
+  description = "Quantidade máxima de tasks no autoscaling"
+  type = number
+  default = (2 * 1024)
+}
+
+variable "ecs-memory" {
+  description = "Quantidade máxima de tasks no autoscaling"
+  type = number
+  default = (4 * 1024)
+}
+
 variable "image-ecr-uri" {
   description = "Endereço da imagem no ECR"
   type = string
