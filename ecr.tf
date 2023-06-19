@@ -1,21 +1,3 @@
-# resource "aws_ecr_repository" "openproject-repo" {
-#   name = "openproject-repo"
-# }
-
-# resource "null_resource" "image_to_ecr" {
-#   provisioner "local-exec" {
-#     command = <<EOF
-# aws ecr get-login-password --region ${var.regiao} --profile ${var.profile}  | docker login --username AWS --password-stdin ${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.regiao}.amazonaws.com
-# docker tag ${var.docker-image-name}:${var.docker-image-tag} ${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.regiao}.amazonaws.com/${aws_ecr_repository.openproject-repo.name}:${var.docker-image-tag}
-# docker push ${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.regiao}.amazonaws.com/${aws_ecr_repository.openproject-repo.name}:${var.docker-image-tag}
-#     EOF
-#   }
-
-#   # Depend on the ECR repository creation
-#   depends_on = [aws_ecr_repository.openproject-repo]
-# }
-
-
 # Endpoint
 resource "aws_vpc_endpoint" "ecr_endpoint_api" {
   vpc_id              = module.network.vpc_id
@@ -44,3 +26,63 @@ resource "aws_vpc_endpoint" "ecr_endpoint_dkr" {
     Name = "ecr-endpoint-dkr"
   }
 }
+
+resource "aws_vpc_endpoint" "ecr_endpoint_logs" {
+  vpc_id              = module.network.vpc_id
+  service_name        = "com.amazonaws.${var.regiao}.logs"
+  vpc_endpoint_type   = "Interface"
+
+  private_dns_enabled = true
+  security_group_ids  = [module.security.sg-ecr.id]
+  subnet_ids          = module.network.private_subnets[*].id  # Select the appropriate private subnet
+
+  tags = {
+    Name = "ecr-endpoint-logs"
+  }
+}
+
+resource "aws_vpc_endpoint" "ecr_endpoint_s3" {
+  vpc_id              = module.network.vpc_id
+  service_name        = "com.amazonaws.${var.regiao}.s3"
+  vpc_endpoint_type   = "Gateway"
+
+  route_table_ids = module.network.private_route_tables[*].id
+
+  # private_dns_enabled = true
+  # security_group_ids  = [module.security.sg-ecr.id]
+  # subnet_ids          = module.network.private_subnets[*].id  # Select the appropriate private subnet
+
+  tags = {
+    Name = "ecr-endpoint-s3"
+  }
+}
+
+# resource "aws_iam_policy" "s3_access_policy" {
+#   name        = "s3-access-policy"
+#   description = "Allows access to specific S3 bucket"
+
+#   policy = <<EOF
+# {
+# 	"Version": "2008-10-17",
+# 	"Statement": [
+# 		{
+# 			"Effect": "Allow",
+# 			"Principal": "*",
+# 			"Action": "s3:GetObject",
+# 			"Resource": "arn:aws:s3:::prod-region-starport-layer-bucket/*"
+# 		}
+# 	]
+# }
+# EOF
+# }
+
+# data "aws_vpc_endpoint_service" "s3" {
+#   service      = "s3"
+#   service_type = "Gateway"
+# }
+
+
+# resource "aws_vpc_endpoint_service_allowed_principal" "ecr_endpoint_s3_principal" {
+#   vpc_endpoint_service_id = data.aws_vpc_endpoint_service.s3.id
+#   principal_arn           = aws_iam_policy.s3_access_policy.arn
+# }
