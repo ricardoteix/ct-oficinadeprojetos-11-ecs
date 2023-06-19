@@ -19,8 +19,8 @@ output "openproject-lb-dns" {
 
 resource "local_file" "locust_env" {
     content  = <<-EOT
-LOADBALANCER_DNS="http://${aws_lb.openproject.dns_name}";
-API_KEY="<Obter no OpenProject>";
+LOADBALANCER_DNS=http://${aws_lb.openproject.dns_name}
+API_KEY=<Obter no OpenProject>
     EOT
     filename = "./locust-load-test/.env"
 }
