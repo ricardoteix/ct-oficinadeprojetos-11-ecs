@@ -50,8 +50,11 @@ override.tf.json
 .terraform.lock.hcl
 
 k6-load-test/env.js
+k6-load-test/relatorios/
 
 locust-load-test/.env
+locust-load-test/relatorios/
 
 env/
 __pycache__/
+
