@@ -14,3 +14,5 @@ module "network" {
 # module.network.vpc_id
 # module.network.public_subnets[*]
 # module.network.private_subnets[*]
+# module.network.private_route_tables[*]
+# module.network.public_route_table
