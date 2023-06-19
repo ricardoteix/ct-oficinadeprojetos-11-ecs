@@ -4,6 +4,5 @@ import os
 def load(file):
     f = open(file, 'r')
     vars = f.readlines()
-    for var in vars:
-        env_var = var.strip().split("=")
-        os.environv[env_var[0]] = env_var[1]
+    return vars[0].strip().split("=")[1], vars[1].strip().split("=")[1]
+    

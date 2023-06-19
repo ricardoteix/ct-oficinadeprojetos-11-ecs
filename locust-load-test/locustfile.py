@@ -2,18 +2,17 @@ from locust import HttpUser, task, between
 from utils import load_env
 import os
 
+LOADBALANCER_DNS, API_KEY = load_env.load('.env')
+print(LOADBALANCER_DNS, API_KEY)
 
 class OpenProject(HttpUser):
 
-    # def __init__(self): 
-    #     load_env.load('.env')
+    # wait_time = between(1, 5)
 
-    wait_time = between(1, 5)
-
-    host = "http://openproject-lb-1481225165.us-east-1.elb.amazonaws.com"
+    host = LOADBALANCER_DNS
         
     username = 'apikey'
-    password = "b169a00af0b1a06c443063f3b192a5daf10e4e57449076241355270e7299369d"
+    password = API_KEY
 
     @task(5)
     def project1(self):
