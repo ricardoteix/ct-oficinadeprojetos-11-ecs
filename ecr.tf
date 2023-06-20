@@ -44,6 +44,21 @@ resource "aws_vpc_endpoint" "ecr_endpoint_logs" {
   }
 }
 
+resource "aws_vpc_endpoint" "ecr_endpoint_elasticache" {
+  count = var.use-nat-gateway ? 0 : 1
+  vpc_id              = module.network.vpc_id
+  service_name        = "com.amazonaws.${var.regiao}.elasticache"
+  vpc_endpoint_type   = "Interface"
+
+  private_dns_enabled = true
+  security_group_ids  = [module.security.sg-ecr.id]
+  subnet_ids          = module.network.private_subnets[*].id  # Select the appropriate private subnet
+
+  tags = {
+    Name = "ecr-endpoint-logs"
+  }
+}
+
 resource "aws_vpc_endpoint" "ecr_endpoint_s3" {
   count = var.use-nat-gateway ? 0 : 1
   vpc_id              = module.network.vpc_id
