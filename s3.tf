@@ -37,8 +37,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "projeto-static-config" {
     status = "Enabled"
 
     transition {
-      days          = 30
-      storage_class = "STANDARD_IA"
+      days          = 1
+      storage_class = "INTELLIGENT_TIERING"
     }
 
   }

@@ -1,5 +1,4 @@
 # Configurações inicias do projeto com AWS
-
 terraform {
   required_providers {
     aws = {
